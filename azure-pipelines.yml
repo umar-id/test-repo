@@ -3,6 +3,7 @@ pr:
         include:
             - "main"
             - "demo"
+            - just 
 
 trigger:
     batch: "true"
