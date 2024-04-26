@@ -46,37 +46,8 @@ stages:
                     and(succeeded(),
                     ne(variables.IS_DEMO_BRANCH, 'true'))
                 steps:
-                    - script: echo ${{ eq(variables['TARGET_BRANCH'], 'main') }}
+                   - script: |
+                       echo hi how are you doing????
+                     condition:
+                       eq(variables.IS_DEMO_BRANCH, 'true'))
 
-                    - script: echo The value of TARGET_BRANCH is $(TARGET_BRANCH) and echo $(system.pullRequest.targetBranch)
-                    - script: |
-                          if [ "$(TARGET_BRANCH)" == "main" ] && [ "$(system.pullRequest.targetBranch)" == "main" ]; then
-                            echo "Both TARGET_BRANCH and system.pullRequest.targetBranch are main."
-                          else
-                            echo "One or both of TARGET_BRANCH and system.pullRequest.targetBranch are not main."
-                          fi
-                      displayName: 'Check if both branches are main'
-
-                    -  script: |
-                            if [ "$TARGET_BRANCH" = "main" ]; then
-                              echo "TARGET_BRANCH is main"
-                            else
-                              echo "TARGET_BRANCH is not main"
-                            fi
-                            
-                            if [ "$(system.pullRequest.targetBranch)" = "main" ]; then
-                              echo "system.pullRequest.targetBranch is main"
-                            else
-                              echo "system.pullRequest.targetBranch is not main"
-                            fi
-                       displayName: 'Checking brances'
-
-
-                    - script: echo ${{ eq(variables['TARGET_BRANCH'], 'main') }}
-                    - script: echo ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
-
-                    - script: echo ${{ eq(variables['system.pullRequest.targetBranch'], variables['System.PullRequest.TargetBranch']) }}
-                    - script: echo ${{ eq('main', 'main') }}
-                    - script: echo ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
-
-                  
