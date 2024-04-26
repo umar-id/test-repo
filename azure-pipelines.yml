@@ -19,11 +19,8 @@ variables:
     - name: IS_DEMO_BRANCH
       value: ${{ eq(variables['Build.SourceBranch'], 'temp') }}
 
-    - name: IS_TARGET_BRANCH_MAIN
-      value: ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
-
-    - name: TARGET_BRANCH
-      value: $[ variables['system.pullRequest.targetBranch'] ]
+    - name: IS_MAIN_BRANCH
+      value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/demo') }}
 
 
         #
@@ -43,9 +40,6 @@ stages:
               - job: UnitTesting
                 displayName: 'Unit Tests'
                 condition: |
-                  and(
-                      eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-                      eq(variables['Build.Reason'], 'PullRequestMerge')
-                  )
+                  eq(variables.IS_MAIN_BRANCH, 'true')
                 steps:
                    - script: echo hi how are you doing????
