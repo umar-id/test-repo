@@ -43,11 +43,9 @@ stages:
               - job: UnitTesting
                 displayName: 'Unit Tests'
                 condition: |
-                    and(succeeded(),
-                    ne(variables.IS_DEMO_BRANCH, 'true'))
+                  and(
+                      eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+                      eq(variables['Build.Reason'], 'PullRequestMerge')
+                  )
                 steps:
-                   - script: |
-                       echo hi how are you doing????
-                     condition:
-                       eq(variables.IS_DEMO_BRANCH, 'true')
-
+                   - script: echo hi how are you doing????
