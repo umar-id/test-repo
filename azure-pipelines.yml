@@ -17,7 +17,7 @@ trigger:
 # Variables used throughout the pipeline
 variables:
     - name: IS_DEMO_BRANCH
-      value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/demo') }}
+      value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/temp') }}
 
     - name: IS_TARGET_BRANCH_MAIN
       value: ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
