@@ -49,5 +49,5 @@ stages:
                    - script: |
                        echo hi how are you doing????
                      condition:
-                       eq(variables.IS_DEMO_BRANCH, 'true'))
+                       eq(variables.IS_DEMO_BRANCH, 'true')
 
