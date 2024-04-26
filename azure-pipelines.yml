@@ -1,0 +1,81 @@
+pr:
+    branches:
+        include:
+            - "main"
+            - "demo"
+
+trigger:
+    batch: "true"
+    branches:
+        include:
+            - "main"
+            - "demo"
+
+# External resources, such as repositories, needed by this pipeline
+
+# Variables used throughout the pipeline
+variables:
+    - name: IS_DEMO_BRANCH
+      value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/demo') }}
+
+    - name: IS_TARGET_BRANCH_MAIN
+      value: ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
+
+    - name: TARGET_BRANCH
+      value: $[ variables['system.pullRequest.targetBranch'] ]
+
+
+        #
+        # This pipeline is divided into four stages: UI_TESTS, UNIT_TESTS, BUILD_AND_PUBLISH, and DISTRIBUTE.
+        # The first two stages are designed to run UI and Unit tests in parallel to optimize build times and resource utilization.
+        # The BUILD_AND_PUBLISH stage depends on the successful completion of both testing stages before it can begin.
+        # This ensures that we only build and publish our application if it passes all the automated tests.
+        #The DISTRIBUTE stage depends on successful completion of BUILD_AND_PUBLISH and it will distribute the apk file to relevant group on microsoft app center.
+        #
+        # We are using different macOS image in UI_TEST stages to ensure compatibility and to take advantage of the specific toolsets
+
+stages:
+        - stage: UNIT_TESTS
+          displayName: 'Unit Tests'
+          dependsOn:
+          jobs:
+              - job: UnitTesting
+                displayName: 'Unit Tests'
+                condition: |
+                    and(succeeded(),
+                    ne(variables.IS_DEMO_BRANCH, 'true'))
+                steps:
+                    - script: echo ${{ eq(variables['TARGET_BRANCH'], 'main') }}
+
+                    - script: echo The value of TARGET_BRANCH is $(TARGET_BRANCH) and echo $(system.pullRequest.targetBranch)
+                    - script: |
+                          if [ "$(TARGET_BRANCH)" == "main" ] && [ "$(system.pullRequest.targetBranch)" == "main" ]; then
+                            echo "Both TARGET_BRANCH and system.pullRequest.targetBranch are main."
+                          else
+                            echo "One or both of TARGET_BRANCH and system.pullRequest.targetBranch are not main."
+                          fi
+                      displayName: 'Check if both branches are main'
+
+                    -  script: |
+                            if [ "$TARGET_BRANCH" = "main" ]; then
+                              echo "TARGET_BRANCH is main"
+                            else
+                              echo "TARGET_BRANCH is not main"
+                            fi
+                            
+                            if [ "$(system.pullRequest.targetBranch)" = "main" ]; then
+                              echo "system.pullRequest.targetBranch is main"
+                            else
+                              echo "system.pullRequest.targetBranch is not main"
+                            fi
+                       displayName: 'Checking brances'
+
+
+                    - script: echo ${{ eq(variables['TARGET_BRANCH'], 'main') }}
+                    - script: echo ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
+
+                    - script: echo ${{ eq(variables['system.pullRequest.targetBranch'], variables['System.PullRequest.TargetBranch']) }}
+                    - script: echo ${{ eq('main', 'main') }}
+                    - script: echo ${{ eq(variables['system.pullRequest.targetBranch'], 'main') }}
+
+                  
